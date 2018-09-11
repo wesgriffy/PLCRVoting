@@ -14,7 +14,7 @@ contract('PLCRVoting', (accounts) => {
     let plcr;
     let token;
 
-    before(async () => {
+    beforeEach(async () => {
       const plcrFactory = await PLCRFactory.deployed();
       const receipt = await plcrFactory.newPLCRWithToken('10000', 'TestToken', '0', 'TEST');
 

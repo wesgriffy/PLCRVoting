@@ -13,7 +13,7 @@ contract('PLCRVoting', (accounts) => {
     let plcr;
     let token;
 
-    before(async () => {
+    beforeEach(async () => {
       const plcrFactory = await PLCRFactory.deployed();
       const factoryReceipt = await plcrFactory.newPLCRWithToken('1000', 'TestToken', '0', 'TEST');
       plcr = PLCRVoting.at(factoryReceipt.logs[0].args.plcr);
@@ -42,6 +42,11 @@ contract('PLCRVoting', (accounts) => {
     });
 
     it('should reject a position that is not valid', async () => {
+      await utils.as(alice, plcr.requestVotingRights, 50);
+      const receipt1 = await utils.as(alice, plcr.startPoll, 50, 100, 100);
+      const pollID1 = utils.getPollIDFromReceipt(receipt1);
+      const secretHash1 = utils.createVoteHash(1, 420);
+      await utils.as(alice, plcr.commitVote, pollID1, secretHash1, 1, 0);
       const receipt = await utils.as(alice, plcr.startPoll, 50, 100, 100);
       const pollID = utils.getPollIDFromReceipt(receipt);
       const secretHash = utils.createVoteHash(1, 420);

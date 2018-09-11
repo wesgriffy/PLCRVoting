@@ -13,7 +13,7 @@ contract('PLCRVoting', (accounts) => {
     let plcr;
     let token;
 
-    before(async () => {
+    beforeEach(async () => {
       const plcrFactory = await PLCRFactory.deployed();
       const factoryReceipt = await plcrFactory.newPLCRWithToken('1000', 'TestToken', '0', 'TEST');
       plcr = PLCRVoting.at(factoryReceipt.logs[0].args.plcr);
@@ -38,6 +38,8 @@ contract('PLCRVoting', (accounts) => {
 
     it('should fail when the user requests to withdraw more tokens than are available to them',
       async () => {
+        await utils.as(alice, plcr.requestVotingRights, 11);
+        await utils.as(alice, plcr.withdrawVotingRights, 10);
         const errMsg = 'Alice was able to withdraw more voting rights than she should have had';
         try {
           await utils.as(alice, plcr.withdrawVotingRights, 10);
@@ -50,6 +52,7 @@ contract('PLCRVoting', (accounts) => {
       });
 
     it('should withdraw voting rights for all remaining tokens', async () => {
+      await utils.as(alice, plcr.requestVotingRights, 1);
       await utils.as(alice, plcr.withdrawVotingRights, 1);
       const voteTokenBalance = await plcr.voteTokenBalance.call(alice);
       assert.strictEqual(voteTokenBalance.toNumber(10), 0,

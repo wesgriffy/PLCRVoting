@@ -8,7 +8,7 @@ contract('PLCRVoting', () => {
   describe('Function: INITIAL_POLL_NONCE', () => {
     let plcr;
 
-    before(async () => {
+    beforeEach(async () => {
       const plcrFactory = await PLCRFactory.deployed();
       const receipt = await plcrFactory.newPLCRWithToken('1000', 'TestToken', '0', 'TEST');
       plcr = PLCRVoting.at(receipt.logs[0].args.plcr);

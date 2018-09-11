@@ -13,7 +13,7 @@ contract('PLCRVoting', (accounts) => {
     let plcr;
     let token;
 
-    before(async () => {
+    beforeEach(async () => {
       const plcrFactory = await PLCRFactory.deployed();
       const receipt = await plcrFactory.newPLCRWithToken('10000', 'TestToken', '0', 'TEST');
 
@@ -42,12 +42,12 @@ contract('PLCRVoting', (accounts) => {
     it('should update a commit for a poll by changing the secretHash', async () => {
       const options = utils.defaultOptions();
       options.actor = alice;
+      const pollID = await utils.startPollAndCommitVote(options, plcr);
+      const originalHash = await plcr.getCommitHash.call(alice, pollID);
       options.vote = '0';
 
       const errMsg = 'Alice was not able to update her commit';
-      const pollID = '1';
 
-      const originalHash = await plcr.getCommitHash.call(alice, pollID);
       const secretHash = utils.createVoteHash(options.vote, options.salt);
       const prevPollID =
         await plcr.getInsertPointForNumTokens.call(options.actor, options.numTokens, pollID);
@@ -98,7 +98,7 @@ contract('PLCRVoting', (accounts) => {
       }
 
       const tokensCommitted = await plcr.getLockedTokens.call(alice);
-      assert.strictEqual(tokensCommitted.toString(10), options.numTokens, errMsg);
+      assert.strictEqual(tokensCommitted.toString(10), '0', errMsg);
     });
 
     it('should update a commit for a poll by changing the numTokens, and allow the user to ' +

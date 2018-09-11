@@ -13,7 +13,7 @@ contract('PLCRVoting', (accounts) => {
     let plcr;
     let token;
 
-    before(async () => {
+    beforeEach(async () => {
       const plcrFactory = await PLCRFactory.deployed();
       const factoryReceipt = await plcrFactory.newPLCRWithToken('1000', 'TestToken', '0', 'TEST');
       plcr = PLCRVoting.at(factoryReceipt.logs[0].args.plcr);
@@ -44,8 +44,8 @@ contract('PLCRVoting', (accounts) => {
     it('should return false if the poll has not ended', async () => {
       const options = utils.defaultOptions();
       options.actor = alice;
-      options.votingRights = '20';
-      options.prevPollID = '1';
+      // options.votingRights = '20';
+      // options.prevPollID = '1'; do these lines serve a purpose in this test?
 
       const pollID = await utils.startPollAndCommitVote(options, plcr);
 
